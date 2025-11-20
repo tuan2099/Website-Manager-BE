@@ -12,6 +12,7 @@ const websiteRoutes = require('./modules/websites/website.routes');
 const teamRoutes = require('./modules/teams/team.routes');
 const apiTokenRoutes = require('./modules/apiTokens/apiToken.routes');
 const webhookRoutes = require('./modules/webhooks/webhook.routes');
+const settingsRoutes = require('./modules/settings/setting.routes');
 const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
 
 const app = express();
@@ -36,6 +37,7 @@ app.use('/websites', websiteRoutes);
 app.use('/teams', teamRoutes);
 app.use('/api-tokens', apiTokenRoutes);
 app.use('/webhooks', webhookRoutes);
+app.use('/settings', settingsRoutes);
 app.use('/dashboard', dashboardRoutes);
 
 app.get('/health', (req, res) => {

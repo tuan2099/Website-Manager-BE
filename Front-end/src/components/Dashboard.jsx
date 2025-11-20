@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Paper, Grid, Typography, Box } from '@mui/material';
 import { apiRequest } from '../api';
 
 export function Dashboard({ setStatus }) {
@@ -44,32 +45,64 @@ export function Dashboard({ setStatus }) {
 
   if (!data) return null;
 
+  const cards = [
+    {
+      label: 'Total Websites',
+      value: data.totalWebsites,
+    },
+    {
+      label: 'Offline Websites',
+      value: data.offlineWebsites,
+      highlight: 'red',
+    },
+    {
+      label: 'SSL Expiring (≤15d)',
+      value: data.sslExpiring,
+      highlight: 'amber',
+    },
+    {
+      label: 'Domain Expiring (≤15d)',
+      value: data.domainExpiring,
+      highlight: 'amber',
+    },
+    {
+      label: 'Open Alerts',
+      value: data.openAlerts,
+      highlight: 'red',
+    },
+    {
+      label: 'Checks last 24h',
+      value: data.checksLast24h,
+    },
+  ];
+
   return (
-    <div className="dashboard-grid">
-      <div className="dashboard-card">
-        <div className="card-label">Total Websites</div>
-        <div className="card-value">{data.totalWebsites}</div>
-      </div>
-      <div className="dashboard-card">
-        <div className="card-label">Offline Websites</div>
-        <div className="card-value highlight-red">{data.offlineWebsites}</div>
-      </div>
-      <div className="dashboard-card">
-        <div className="card-label">SSL Expiring (≤15d)</div>
-        <div className="card-value highlight-amber">{data.sslExpiring}</div>
-      </div>
-      <div className="dashboard-card">
-        <div className="card-label">Domain Expiring (≤15d)</div>
-        <div className="card-value highlight-amber">{data.domainExpiring}</div>
-      </div>
-      <div className="dashboard-card">
-        <div className="card-label">Open Alerts</div>
-        <div className="card-value highlight-red">{data.openAlerts}</div>
-      </div>
-      <div className="dashboard-card">
-        <div className="card-label">Checks last 24h</div>
-        <div className="card-value">{data.checksLast24h}</div>
-      </div>
-    </div>
+    <Grid container spacing={2}>
+      {cards.map((c) => (
+        <Grid item xs={12} sm={6} md={4} key={c.label}>
+          <Paper elevation={2} sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography variant="body2" className="muted">
+              {c.label}
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 600,
+                  color:
+                    c.highlight === 'red'
+                      ? '#dc2626'
+                      : c.highlight === 'amber'
+                        ? '#d97706'
+                        : 'inherit',
+                }}
+              >
+                {c.value}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
   );
 }

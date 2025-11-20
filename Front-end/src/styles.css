@@ -1,6 +1,6 @@
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f5f5f5;
+  background: #f3f4ff;
   margin: 0;
   padding: 0;
 }
@@ -53,7 +53,7 @@ body {
   font-size: 13px;
   border-radius: 999px;
   border: 1px solid #4b5563;
-  background: #111827;
+  background: #020617;
   color: #e5e7eb;
   cursor: pointer;
 }
@@ -70,10 +70,12 @@ body {
 
 .app-sidebar {
   width: 220px;
-  background: #111827;
-  color: #9ca3af;
-  padding: 12px;
+  background: #ffffff;
+  color: #6b7280;
+  padding: 16px 12px;
   box-sizing: border-box;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
 .sidebar-section {
@@ -109,8 +111,10 @@ body {
 
 .app-main {
   flex: 1;
-  padding: 20px;
+  padding: 24px 28px;
   box-sizing: border-box;
+  background: #f9fafb;
+  color: #111827;
 }
 
 .main-title {
@@ -141,13 +145,17 @@ body {
 }
 
 .status-bar {
-  min-height: 20px;
+  min-height: 24px;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
 }
 
 .status-bar.info {
-  color: #4b5563;
+  color: #1d4ed8;
 }
 
 .status-bar.success {
@@ -242,8 +250,22 @@ body {
 }
 
 .dashboard-error {
-  color: #dc2626;
+  color: #b91c1c;
   font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(248, 113, 113, 0.12);
+}
+
+/* MUI sidebar active item style (purple like design) */
+.app-sidebar .Mui-selected {
+  background-color: #4f46e5 !important;
+  color: #f9fafb !important;
+}
+
+.app-sidebar .MuiListItemButton-root {
+  border-radius: 999px;
+  margin-bottom: 4px;
 }
 
 .website-detail {

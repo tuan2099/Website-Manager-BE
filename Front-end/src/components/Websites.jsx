@@ -14,6 +14,8 @@ import {
   TableCell,
   Chip,
   Typography,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
 import { apiRequest } from '../api';
 
@@ -27,6 +29,12 @@ export function Websites({ setStatus }) {
   const navigate = useNavigate();
   const [newName, setNewName] = useState('');
   const [newDomain, setNewDomain] = useState('');
+  const [newRegistrar, setNewRegistrar] = useState('');
+  const [newHostingProvider, setNewHostingProvider] = useState('');
+  const [newHostingPlan, setNewHostingPlan] = useState('');
+  const [newServerIp, setNewServerIp] = useState('');
+  const [newNotes, setNewNotes] = useState('');
+  const [newMonitoringEnabled, setNewMonitoringEnabled] = useState(true);
   const [creating, setCreating] = useState(false);
 
   const load = async (params = {}) => {
@@ -68,10 +76,25 @@ export function Websites({ setStatus }) {
     try {
       await apiRequest('/websites', {
         method: 'POST',
-        body: { name: newName, domain: newDomain },
+        body: {
+          name: newName,
+          domain: newDomain,
+          monitoring_enabled: newMonitoringEnabled,
+          registrar: newRegistrar || undefined,
+          hosting_provider: newHostingProvider || undefined,
+          hosting_plan: newHostingPlan || undefined,
+          server_ip: newServerIp || undefined,
+          notes: newNotes || undefined,
+        },
       });
       setNewName('');
       setNewDomain('');
+      setNewRegistrar('');
+      setNewHostingProvider('');
+      setNewHostingPlan('');
+      setNewServerIp('');
+      setNewNotes('');
+      setNewMonitoringEnabled(true);
       await load({ status: statusFilter, search, tag });
       setStatus('Tạo website thành công', 'success');
     } catch (err) {
@@ -96,11 +119,46 @@ export function Websites({ setStatus }) {
           size="small"
         />
         <TextField
+          label="Registrar (vd: Namecheap)"
+          value={newRegistrar}
+          onChange={(e) => setNewRegistrar(e.target.value)}
+          size="small"
+        />
+        <TextField
+          label="Hosting provider"
+          value={newHostingProvider}
+          onChange={(e) => setNewHostingProvider(e.target.value)}
+          size="small"
+        />
+        <TextField
+          label="Hosting plan"
+          value={newHostingPlan}
+          onChange={(e) => setNewHostingPlan(e.target.value)}
+          size="small"
+        />
+        <TextField
+          label="Server IP"
+          value={newServerIp}
+          onChange={(e) => setNewServerIp(e.target.value)}
+          size="small"
+        />
+        <TextField
           label="Domain (vd: example.com)"
           value={newDomain}
           onChange={(e) => setNewDomain(e.target.value)}
           required
           size="small"
+        />
+        <FormControlLabel
+          control={(
+            <Switch
+              size="small"
+              checked={newMonitoringEnabled}
+              onChange={(e) => setNewMonitoringEnabled(e.target.checked)}
+            />
+          )}
+          label="Enable monitoring"
+          sx={{ alignSelf: 'center', ml: 1 }}
         />
         <Button type="submit" variant="contained" disabled={creating} sx={{ alignSelf: 'center' }}>
           Thêm website
@@ -148,6 +206,7 @@ export function Websites({ setStatus }) {
             <TableCell>Tên</TableCell>
             <TableCell>Domain</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Monitoring</TableCell>
             <TableCell>Registrar</TableCell>
             <TableCell>Hosting</TableCell>
             <TableCell>Tags</TableCell>
@@ -156,7 +215,7 @@ export function Websites({ setStatus }) {
         <TableBody>
           {items.length === 0 && !loading && (
             <TableRow>
-              <TableCell colSpan={6} align="center">
+              <TableCell colSpan={7} align="center">
                 <span className="muted">Không có website nào</span>
               </TableCell>
             </TableRow>
@@ -176,6 +235,13 @@ export function Websites({ setStatus }) {
                   label={w.status}
                   className={`status-chip status-${w.status}`}
                 />
+              </TableCell>
+              <TableCell>
+                {w.monitoring_enabled ? (
+                  <Chip size="small" label="On" color="success" />
+                ) : (
+                  <Chip size="small" label="Off" color="default" />
+                )}
               </TableCell>
               <TableCell>{w.registrar || '-'}</TableCell>
               <TableCell>{w.hosting_provider || '-'}</TableCell>

@@ -105,49 +105,62 @@ async function runUptimeCheck() {
           },
         });
 
-        if (!existingOpenAlert) {
-          const alertMessage = `Website ${website.domain} is down ${consecutiveDownThreshold} times in a row`;
+        const alertMessage = `Website ${website.domain} is down ${consecutiveDownThreshold} times in a row`;
 
+        // Chỉ tạo WebsiteAlert nếu chưa có alert đang mở
+        if (!existingOpenAlert) {
           await db.WebsiteAlert.create({
             website_id: website.id,
             type: 'uptime_down',
             status: 'open',
             message: alertMessage,
           });
+        }
 
+        // Luôn tạo Notification mới để đảm bảo gửi mail / webhook
+        await db.Notification.create({
+          website_id: website.id,
+          type: 'uptime_down',
+          channel: 'system',
+          payload: JSON.stringify({
+            domain: website.domain,
+            message: alertMessage,
+          }),
+          status: 'pending',
+        });
+
+        await db.Notification.create({
+          website_id: website.id,
+          type: 'uptime_down',
+          channel: 'email',
+          payload: JSON.stringify({
+            subject: `[Website Manager] Website down: ${website.domain}`,
+            message: alertMessage,
+          }),
+          status: 'pending',
+        });
+
+        const webhooks = await db.Webhook.findAll({
+          where: {
+            is_active: true,
+            event: 'uptime_down',
+          },
+        });
+
+        for (const hook of webhooks) {
           await db.Notification.create({
             website_id: website.id,
             type: 'uptime_down',
-            channel: 'system',
+            channel: 'webhook',
             payload: JSON.stringify({
+              webhook_id: hook.id,
+              url: hook.url,
+              event: hook.event,
               domain: website.domain,
               message: alertMessage,
             }),
-            status: 'pending', // stub: chờ hệ thống gửi thực tế (email/webhook) sau
+            status: 'pending',
           });
-
-          const webhooks = await db.Webhook.findAll({
-            where: {
-              is_active: true,
-              event: 'uptime_down',
-            },
-          });
-
-          for (const hook of webhooks) {
-            await db.Notification.create({
-              website_id: website.id,
-              type: 'uptime_down',
-              channel: 'webhook',
-              payload: JSON.stringify({
-                webhook_id: hook.id,
-                url: hook.url,
-                event: hook.event,
-                domain: website.domain,
-                message: alertMessage,
-              }),
-              status: 'pending',
-            });
-          }
         }
       }
     }
@@ -155,8 +168,8 @@ async function runUptimeCheck() {
 }
 
 function registerUptimeCheckJob() {
-  // Chạy mỗi 5 phút
-  cron.schedule('*/5 * * * *', async () => {
+  // Chạy mỗi 6 tiếng
+  cron.schedule('0 */6 * * *', async () => {
     try {
       await runUptimeCheck();
     } catch (err) {

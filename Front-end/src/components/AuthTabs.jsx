@@ -162,7 +162,6 @@ export function AuthTabs({ setStatus, onUserChange }) {
         sx={{ mb: 2 }}
       >
         <Tab label="Login" value="login" />
-        <Tab label="Register" value="register" />
         <Tab label="Change Password" value="changePassword" />
       </Tabs>
 
@@ -174,7 +173,6 @@ export function AuthTabs({ setStatus, onUserChange }) {
           }}
         />
       )}
-      {activeTab === 'register' && <RegisterForm setStatus={setStatus} />}
       {activeTab === 'changePassword' && <ChangePasswordForm setStatus={setStatus} />}
     </Paper>
   );

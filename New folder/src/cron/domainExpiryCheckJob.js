@@ -57,6 +57,17 @@ async function runDomainExpiryCheck() {
           status: 'pending',
         });
 
+        await db.Notification.create({
+          website_id: website.id,
+          type: 'domain_expiry',
+          channel: 'email',
+          payload: JSON.stringify({
+            subject: `[Website Manager] Domain expiring: ${website.domain}`,
+            message: `Domain ${website.domain} will expire in ${diffDays} days`,
+          }),
+          status: 'pending',
+        });
+
         const webhooks = await db.Webhook.findAll({
           where: {
             is_active: true,

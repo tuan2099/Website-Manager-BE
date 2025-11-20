@@ -3,6 +3,7 @@ const db = require('../../database/models');
 async function listUsers(req, res) {
   const users = await db.User.findAll({
     attributes: ['id', 'email', 'name', 'is_active', 'created_at'],
+    include: [{ model: db.Role, as: 'roles', attributes: ['id', 'name'] }],
   });
   res.json(users);
 }
